@@ -12,5 +12,6 @@ public interface ICourseService {
 
     Course saveCourse(CourseDTO courseDTO);
     List<CourseDTO> getAllCourses();
+    void deleteCourse(String id);
 
 }

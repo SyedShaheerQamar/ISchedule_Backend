@@ -74,4 +74,9 @@ public class RoomServiceImpl implements IRoomService {
 
         return roomCourseDTOList;
     }
+
+    @Override
+    public void deleteRoom(String id) {
+        this.roomRepository.deleteById(Long.valueOf(id));
+    }
 }

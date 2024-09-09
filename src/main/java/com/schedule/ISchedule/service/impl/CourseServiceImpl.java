@@ -79,6 +79,11 @@ public class CourseServiceImpl implements ICourseService {
         return courseDTOS;
     }
 
+    @Override
+    public void deleteCourse(String id) {
+        this.courseRepository.deleteById(Long.valueOf(id));
+    }
+
     private Boolean checkToVerify(Set<Course> courseSet, CourseDTO courseDTO) {
 
         for(Course course : courseSet){

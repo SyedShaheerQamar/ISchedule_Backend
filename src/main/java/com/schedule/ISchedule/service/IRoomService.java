@@ -10,5 +10,6 @@ public interface IRoomService {
 
     Room saveRoom(RoomDTO roomDTO);
     List<RoomCourseDTO> getAllRooms();
+    void deleteRoom(String id);
 
 }

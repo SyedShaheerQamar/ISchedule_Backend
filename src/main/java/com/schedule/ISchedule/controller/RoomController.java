@@ -44,4 +44,10 @@ public class RoomController {
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("No rooms available.");
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteRoom(@PathVariable String id){
+        this.roomService.deleteRoom(id);
+        return ResponseEntity.ok().build();
+    }
 }
