@@ -6,13 +6,14 @@ import com.schedule.ISchedule.model.Room;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 @Repository
 public interface IPrefRepository extends JpaRepository<Preferences, Long> {
 
-    Optional<Preferences> findPreferencesByCourseName(String courseName);
+    List<Preferences> findPreferencesByCourseName(String courseName);
 
 
 }

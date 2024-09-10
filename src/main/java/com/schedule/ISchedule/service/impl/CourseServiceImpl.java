@@ -1,15 +1,23 @@
 package com.schedule.ISchedule.service.impl;
 
 import com.schedule.ISchedule.dto.CourseDTO;
+import com.schedule.ISchedule.dto.TimeTableDTO;
 import com.schedule.ISchedule.model.Course;
+import com.schedule.ISchedule.model.Preferences;
 import com.schedule.ISchedule.model.Room;
+import com.schedule.ISchedule.model.User;
 import com.schedule.ISchedule.repository.ICourseRepository;
+import com.schedule.ISchedule.repository.IPrefRepository;
 import com.schedule.ISchedule.repository.IRoomRepository;
+import com.schedule.ISchedule.repository.IUserRepository;
 import com.schedule.ISchedule.service.ICourseService;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
+import java.time.format.TextStyle;
 import java.util.*;
 
 @Service
@@ -17,10 +25,14 @@ public class CourseServiceImpl implements ICourseService {
 
     private final ICourseRepository courseRepository;
     private final IRoomRepository roomRepository;
+    private final IUserRepository userRepository;
+    private final IPrefRepository prefRepository;
 
-    public CourseServiceImpl(ICourseRepository courseRepository, IRoomRepository roomRepository) {
+    public CourseServiceImpl(ICourseRepository courseRepository, IRoomRepository roomRepository, IUserRepository userRepository, IPrefRepository prefRepository) {
         this.courseRepository = courseRepository;
         this.roomRepository = roomRepository;
+        this.userRepository = userRepository;
+        this.prefRepository = prefRepository;
     }
     @Override
     public Course saveCourse(CourseDTO courseDTO) {
@@ -81,7 +93,52 @@ public class CourseServiceImpl implements ICourseService {
 
     @Override
     public void deleteCourse(String id) {
-        this.courseRepository.deleteById(Long.valueOf(id));
+        Optional<Course> course = this.courseRepository.findById(Long.valueOf(id));
+
+        if(course.isPresent()){
+            List<User> users = this.userRepository.findUserByCourses(course.get());
+
+            for(User user : users){
+                user.getCourses().remove(course.get());
+
+                this.userRepository.save(user);
+            }
+
+            List<Preferences> preferences = this.prefRepository.findPreferencesByCourseName(course.get().getCourseName());
+
+            this.prefRepository.deleteAll(preferences);
+
+            this.courseRepository.deleteById(Long.valueOf(id));
+        }
+
+        throw new RuntimeException("Cannot delete");
+    }
+
+    @Override
+    public List<CourseDTO> getCoursesByDay() {
+        List<Course> courses = this.courseRepository.findAll();
+        List<CourseDTO> courseDTOS = new ArrayList<>();
+
+        LocalDate currentDate = LocalDate.now();
+        DayOfWeek dayOfWeek = currentDate.getDayOfWeek();
+        String dayName = dayOfWeek.getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+
+        for(Course course : courses){
+            if (course.getDays().contains(dayName)){
+                CourseDTO courseDTO = CourseDTO.builder()
+                        .id(course.getId())
+                        .courseName(course.getCourseName())
+                        .startTime(String.valueOf(course.getStartTime()))
+                        .endTime(String.valueOf(course.getEndTime()))
+                        .roomNumber(course.getRoom().getRoomNumber())
+                        .days(Collections.singletonList(course.getDays()))
+                        .build();
+
+                courseDTOS.add(courseDTO);
+            }
+        }
+
+        return courseDTOS;
     }
 
     private Boolean checkToVerify(Set<Course> courseSet, CourseDTO courseDTO) {

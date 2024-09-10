@@ -46,6 +46,17 @@ public class CourseController {
         return ResponseEntity.ok().body(courses);
     }
 
+    @GetMapping("/timetable")
+    public ResponseEntity<?> getTimetable(){
+        List<CourseDTO> courses = this.courseService.getCoursesByDay();
+
+        if (courses.isEmpty()) {
+            return ResponseEntity.ok(Collections.emptySet());
+        }
+
+        return ResponseEntity.ok().body(courses);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCourse(@PathVariable String id){
         this.courseService.deleteCourse(id);
