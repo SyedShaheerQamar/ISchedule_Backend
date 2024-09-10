@@ -1,7 +1,6 @@
 package com.schedule.ISchedule.service.impl;
 
 import com.schedule.ISchedule.dto.CourseDTO;
-import com.schedule.ISchedule.dto.TimeTableDTO;
 import com.schedule.ISchedule.model.Course;
 import com.schedule.ISchedule.model.Preferences;
 import com.schedule.ISchedule.model.Room;
