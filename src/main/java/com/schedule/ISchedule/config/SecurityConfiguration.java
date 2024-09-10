@@ -1,6 +1,5 @@
 package com.schedule.ISchedule.config;
 
-import com.schedule.ISchedule.model.RoleEnum;
 import com.schedule.ISchedule.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

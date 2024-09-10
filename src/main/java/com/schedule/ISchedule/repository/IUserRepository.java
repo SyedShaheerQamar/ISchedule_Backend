@@ -2,7 +2,6 @@ package com.schedule.ISchedule.repository;
 
 
 import com.schedule.ISchedule.model.Course;
-import com.schedule.ISchedule.model.RoleEnum;
 import com.schedule.ISchedule.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

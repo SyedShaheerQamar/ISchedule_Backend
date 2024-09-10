@@ -5,14 +5,12 @@ import com.schedule.ISchedule.model.User;
 import com.schedule.ISchedule.repository.ICourseRepository;
 import com.schedule.ISchedule.repository.IUserRepository;
 import com.schedule.ISchedule.service.IUserService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service

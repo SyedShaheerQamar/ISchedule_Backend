@@ -1,7 +1,6 @@
 package com.schedule.ISchedule.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
 
 import java.util.Map;
 

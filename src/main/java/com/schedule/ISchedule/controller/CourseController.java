@@ -1,20 +1,16 @@
 package com.schedule.ISchedule.controller;
 
 import com.schedule.ISchedule.dto.CourseDTO;
-import com.schedule.ISchedule.dto.RoomCourseDTO;
 import com.schedule.ISchedule.exceptions.ErrorResponse;
 import com.schedule.ISchedule.model.Course;
-import com.schedule.ISchedule.model.Room;
 import com.schedule.ISchedule.service.ICourseService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor

@@ -7,13 +7,15 @@ import com.schedule.ISchedule.model.Room;
 import com.schedule.ISchedule.repository.ICourseRepository;
 import com.schedule.ISchedule.repository.IPrefRepository;
 import com.schedule.ISchedule.repository.IRoomRepository;
-import com.schedule.ISchedule.service.ICourseService;
 import com.schedule.ISchedule.service.IPrefService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PrefServiceImpl implements IPrefService {

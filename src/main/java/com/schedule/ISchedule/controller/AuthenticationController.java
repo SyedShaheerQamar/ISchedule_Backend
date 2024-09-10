@@ -4,7 +4,6 @@ package com.schedule.ISchedule.controller;
 import com.schedule.ISchedule.dto.JwtAuthenticationResponse;
 import com.schedule.ISchedule.dto.LoginRequest;
 import com.schedule.ISchedule.dto.RegisterRequest;
-import com.schedule.ISchedule.exceptions.ErrorResponse;
 import com.schedule.ISchedule.model.User;
 import com.schedule.ISchedule.service.IAuthenticationService;
 import lombok.RequiredArgsConstructor;
