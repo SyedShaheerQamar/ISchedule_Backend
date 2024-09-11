@@ -178,27 +178,24 @@ public class CourseServiceImpl implements ICourseService {
         LocalTime existingStartTime = existingCourse.getStartTime();
         LocalTime existingEndTime = existingCourse.getEndTime();
 
-        // Check for the exact same time intervals (conflict)
-        if (newStartTime.equals(existingStartTime) && newEndTime.equals(existingEndTime)) {
+        int start = newStartTime.compareTo(existingStartTime);
+        int startCompareExistingEnd = newStartTime.compareTo(existingEndTime);
+        int end = newEndTime.compareTo(existingEndTime);
+        int endCompareExistingStart = newEndTime.compareTo(existingStartTime);
+
+        if(start == 0 && end == 0){
+            return false;
+        }
+        else if(start > 0 && startCompareExistingEnd < 0){
+            return false;
+        }
+        else if(end < 0 && endCompareExistingStart > 0){
+            return false;
+        }
+        else {
             return true;
         }
 
-        // Check if new course starts before the existing course ends
-        if (newStartTime.isBefore(existingEndTime)) {
-            // Check if new course ends after the existing course starts
-            if (newEndTime.isAfter(existingStartTime)) {
-                // Check for consecutive intervals (no conflict)
-                if (newStartTime.equals(existingEndTime) || newEndTime.equals(existingStartTime)) {
-                    return false;  // Consecutive, no overlap
-                } else {
-                    return true;  // Overlapping times
-                }
-            } else {
-                return false;  // No overlap
-            }
-        } else {
-            return false;  // No overlap
-        }
     }
 
     private LocalTime parseTime(String timeStr) {
