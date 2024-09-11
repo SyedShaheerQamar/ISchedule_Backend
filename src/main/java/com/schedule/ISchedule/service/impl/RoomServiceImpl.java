@@ -79,6 +79,19 @@ public class RoomServiceImpl implements IRoomService {
 
     @Override
     public void deleteRoom(String id) {
-        this.roomRepository.deleteById(Long.valueOf(id));
+        Optional<Room> room = this.roomRepository.findById(Long.valueOf(id));
+
+        if (room.isPresent()) {
+            Set<Course> courses = this.courseRepository.findCourseByRoom(room.get());
+
+            // Disassociate the room from the courses
+            for (Course course : courses) {
+                course.setRoom(null);
+                this.courseRepository.save(course);  // Save after disassociation
+            }
+
+            // Now delete the room after all courses are disassociated
+            this.roomRepository.deleteById(Long.valueOf(id));
+        }
     }
 }

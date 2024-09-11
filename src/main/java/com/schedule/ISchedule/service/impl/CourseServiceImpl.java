@@ -36,31 +36,35 @@ public class CourseServiceImpl implements ICourseService {
     @Override
     public Course saveCourse(CourseDTO courseDTO) {
         Optional<Room> roomOptional = this.roomRepository.findByRoomNumber(courseDTO.getRoomNumber());
+        Optional<Course> savedCourse = this.courseRepository.findCourseByCourseName(courseDTO.getCourseName());
 
-        if (roomOptional.isPresent()) {
-            Room room = roomOptional.get();
-            Set<Course> courseSet = this.courseRepository.findCourseByRoom(room);
+        if(savedCourse.isEmpty()){
+            if (roomOptional.isPresent()) {
+                Room room = roomOptional.get();
 
-            if (checkToVerify(courseSet, courseDTO)) {
+                Set<Course> courseSet = this.courseRepository.findCourseByRoom(room);
 
-                // Convert list of days to a comma-separated string
-                String days = String.join(",", courseDTO.getDays());
+                if (checkToVerify(courseSet, courseDTO)) {
 
-                try {
-                    LocalTime startTime = parseTime(courseDTO.getStartTime());
-                    LocalTime endTime = parseTime(courseDTO.getEndTime());
+                    // Convert list of days to a comma-separated string
+                    String days = String.join(",", courseDTO.getDays());
 
-                    // Build the new Course object
-                    Course course = new Course();
-                    course.setCourseName(courseDTO.getCourseName());
-                    course.setStartTime(startTime);
-                    course.setEndTime(endTime);
-                    course.setDays(days);
-                    course.setRoom(room);
+                    try {
+                        LocalTime startTime = parseTime(courseDTO.getStartTime());
+                        LocalTime endTime = parseTime(courseDTO.getEndTime());
 
-                    return this.courseRepository.save(course);
-                } catch (DateTimeParseException e) {
-                    throw new IllegalArgumentException("Invalid time format: " + e.getMessage());
+                        // Build the new Course object
+                        Course course = new Course();
+                        course.setCourseName(courseDTO.getCourseName());
+                        course.setStartTime(startTime);
+                        course.setEndTime(endTime);
+                        course.setDays(days);
+                        course.setRoom(room);
+
+                        return this.courseRepository.save(course);
+                    } catch (DateTimeParseException e) {
+                        throw new IllegalArgumentException("Invalid time format: " + e.getMessage());
+                    }
                 }
             }
         }
@@ -73,14 +77,18 @@ public class CourseServiceImpl implements ICourseService {
     public List<CourseDTO> getAllCourses() {
         List<Course> courses = this.courseRepository.findAll();
         List<CourseDTO> courseDTOS = new ArrayList<>();
+        String roomNumber = null;
 
         for(Course course : courses){
+            if(course.getRoom() != null){
+                roomNumber = course.getRoom().getRoomNumber();
+            }
             CourseDTO courseDTO = CourseDTO.builder()
                     .id(course.getId())
                     .courseName(course.getCourseName())
                     .startTime(String.valueOf(course.getStartTime()))
                     .endTime(String.valueOf(course.getEndTime()))
-                    .roomNumber(course.getRoom().getRoomNumber())
+                    .roomNumber(roomNumber)
                     .days(Collections.singletonList(course.getDays()))
                     .build();
 
@@ -123,7 +131,7 @@ public class CourseServiceImpl implements ICourseService {
         String dayName = dayOfWeek.getDisplayName(TextStyle.FULL, Locale.ENGLISH);
 
         for(Course course : courses){
-            if (course.getDays().contains(dayName)){
+            if (course.getDays().contains(dayName) && course.getRoom() != null){
                 CourseDTO courseDTO = CourseDTO.builder()
                         .id(course.getId())
                         .courseName(course.getCourseName())
@@ -170,27 +178,27 @@ public class CourseServiceImpl implements ICourseService {
         LocalTime existingStartTime = existingCourse.getStartTime();
         LocalTime existingEndTime = existingCourse.getEndTime();
 
-        if (newStartTime.isBefore(existingEndTime)) {
-
-            if (newEndTime.isAfter(existingStartTime)) {
-
-                if (newStartTime.equals(existingEndTime) || newEndTime.equals(existingStartTime)) {
-                    // Intervals are consecutive
-                    return false;
-                } else {
-                    // Intervals overlap
-                    return true;
-                }
-
-            } else {
-                // New interval ends before existing interval starts (no overlap)
-                return false;
-            }
-        } else {
-            // New interval starts after existing interval ends (no overlap)
-            return false;
+        // Check for the exact same time intervals (conflict)
+        if (newStartTime.equals(existingStartTime) && newEndTime.equals(existingEndTime)) {
+            return true;
         }
 
+        // Check if new course starts before the existing course ends
+        if (newStartTime.isBefore(existingEndTime)) {
+            // Check if new course ends after the existing course starts
+            if (newEndTime.isAfter(existingStartTime)) {
+                // Check for consecutive intervals (no conflict)
+                if (newStartTime.equals(existingEndTime) || newEndTime.equals(existingStartTime)) {
+                    return false;  // Consecutive, no overlap
+                } else {
+                    return true;  // Overlapping times
+                }
+            } else {
+                return false;  // No overlap
+            }
+        } else {
+            return false;  // No overlap
+        }
     }
 
     private LocalTime parseTime(String timeStr) {

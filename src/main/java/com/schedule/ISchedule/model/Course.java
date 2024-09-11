@@ -35,7 +35,7 @@ public class Course {
     private String days;
 
     @ManyToOne
-    @JoinColumn(name = "room_id", nullable = false)
+    @JoinColumn(name = "room_id", nullable = true)
     private Room room;
 
     @ManyToMany(mappedBy = "courses")
