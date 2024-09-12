@@ -99,6 +99,38 @@ public class CourseServiceImpl implements ICourseService {
     }
 
     @Override
+    public List<CourseDTO> getAllCoursesByStudent(String email) {
+        Optional<User> optionalUser = this.userRepository.findByEmail(email);
+        List<Course> courses = this.courseRepository.findAll();
+        List<CourseDTO> courseDTOS = new ArrayList<>();
+        String roomNumber = null;
+
+        if(optionalUser.isPresent()){
+            for(Course course : courses){
+                if(course.getStudents().contains(optionalUser.get())){
+                    if(course.getRoom() != null){
+                        roomNumber = course.getRoom().getRoomNumber();
+                    }
+                    CourseDTO courseDTO = CourseDTO.builder()
+                            .id(course.getId())
+                            .courseName(course.getCourseName())
+                            .startTime(String.valueOf(course.getStartTime()))
+                            .endTime(String.valueOf(course.getEndTime()))
+                            .roomNumber(roomNumber)
+                            .days(Collections.singletonList(course.getDays()))
+                            .build();
+
+                    courseDTOS.add(courseDTO);
+                }
+            }
+
+            return courseDTOS;
+        }
+
+        return courseDTOS;
+    }
+
+    @Override
     public void deleteCourse(String id) {
         Optional<Course> course = this.courseRepository.findById(Long.valueOf(id));
 

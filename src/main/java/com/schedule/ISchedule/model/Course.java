@@ -8,7 +8,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -40,5 +42,5 @@ public class Course {
 
     @ManyToMany(mappedBy = "courses")
     @JsonIgnore
-    private Set<User> students = new HashSet<>();
+    private List<User> students = new ArrayList<>();
 }

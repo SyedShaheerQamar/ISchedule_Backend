@@ -42,6 +42,17 @@ public class CourseController {
         return ResponseEntity.ok().body(courses);
     }
 
+    @PostMapping("")
+    public ResponseEntity<?> getCourseByStudent(@RequestBody String email){
+        List<CourseDTO> courses = this.courseService.getAllCoursesByStudent(email);
+
+        if (courses.isEmpty()) {
+            return ResponseEntity.ok(Collections.emptySet());
+        }
+
+        return ResponseEntity.ok().body(courses);
+    }
+
     @GetMapping("/timetable")
     public ResponseEntity<?> getTimetable(){
         List<CourseDTO> courses = this.courseService.getCoursesByDay();

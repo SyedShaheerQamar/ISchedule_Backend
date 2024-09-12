@@ -9,6 +9,7 @@ public interface ICourseService {
 
     Course saveCourse(CourseDTO courseDTO);
     List<CourseDTO> getAllCourses();
+    List<CourseDTO> getAllCoursesByStudent(String email);
     void deleteCourse(String id);
     List<CourseDTO> getCoursesByDay();
 
